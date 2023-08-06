@@ -36,6 +36,7 @@ class UserDetailsScreen extends StatelessWidget {
                         placeholder: (context, url) =>
                             const CircularProgressIndicator()),
                     const SizedBox(height: 20),
+                    Text('Id: ${user.id}'),
                     Text('Name: ${user.name}'),
                     Text('Email: ${user.email}'),
                   ],
