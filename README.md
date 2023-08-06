@@ -1,4 +1,4 @@
-# flutter_test_task
+# flutter_test_task_user_app
 
 **Flutter Test Task** is a simple Flutter application developed to demonstrate data pagination and local caching.
 
