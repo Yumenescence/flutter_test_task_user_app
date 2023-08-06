@@ -49,7 +49,7 @@ class UserLocalStorage {
   }
 
   Future<void> saveTotalLoadedPages(int totalLoadedPages) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _sharedPreferences;
     prefs.setInt(totalLoadedPagesKey, totalLoadedPages);
   }
 

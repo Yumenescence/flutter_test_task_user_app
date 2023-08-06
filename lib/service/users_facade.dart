@@ -29,7 +29,7 @@ class UsersFacade {
 
   Future<PaginationData<UserModel>> _getUsersOnline(int pageNumber) async {
     final fetchedData = await UserRemoteStorage.getUsers(pageNumber);
-    final usersList = fetchedData.data as List<UserModel>;
+    final usersList = fetchedData.data;
     final int totalPages = fetchedData.totalPages;
     final int totalLoadedPages = await userLocalStorage.totalLoadedPages;
     final int loadedPages =

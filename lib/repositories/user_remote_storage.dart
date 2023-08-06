@@ -7,7 +7,7 @@ import '../model/user.dart';
 const String baseUrl = 'https://reqres.in/api/users';
 
 class UserRemoteStorage {
-  static Future<PaginationData> getUsers(int page) async {
+  static Future<PaginationData<UserModel>> getUsers(int page) async {
     final response = await http.get(Uri.parse('$baseUrl?page=$page'));
 
     if (response.statusCode == 200) {
