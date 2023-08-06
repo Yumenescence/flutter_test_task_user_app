@@ -31,7 +31,10 @@ class UserDetailsScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CachedNetworkImage(imageUrl: user.avatar),
+                    CachedNetworkImage(
+                        imageUrl: user.avatar,
+                        placeholder: (context, url) =>
+                            const CircularProgressIndicator()),
                     const SizedBox(height: 20),
                     Text('Name: ${user.name}'),
                     Text('Email: ${user.email}'),

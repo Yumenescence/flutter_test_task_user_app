@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter_test_task/repositories/pagination_data.dart';
+import 'package:flutter_test_task/model/pagination_data.dart';
 import 'package:http/http.dart' as http;
 
 import '../model/user.dart';
@@ -16,7 +16,7 @@ class UserRemoteStorage {
 
       final users = usersData.map((user) => UserModel.fromJson(user)).toList();
       final int totalPages = jsonData['total_pages'];
-      return PaginationData(users: users, totalPages: totalPages);
+      return PaginationData(data: users, totalPages: totalPages);
     } else {
       throw Exception('Failed to load users');
     }

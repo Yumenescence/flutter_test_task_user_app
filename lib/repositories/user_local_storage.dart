@@ -1,13 +1,22 @@
 import 'dart:convert';
-import 'package:flutter_test_task/repositories/pagination_data.dart';
+import 'package:flutter_test_task/model/pagination_data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../model/user.dart';
 
 const key = 'user_data';
+const totalLoadedPagesKey = 'total_loaded_pages';
 
 class UserLocalStorage {
-  static Future<PaginationData> loadUsersFromStorage(int page) async {
-    final prefs = await SharedPreferences.getInstance();
+  final Future<SharedPreferences> _sharedPreferences;
+  UserLocalStorage(this._sharedPreferences);
+
+  Future<int> get totalLoadedPages async {
+    final prefs = await _sharedPreferences;
+    return prefs.getInt(totalLoadedPagesKey) ?? 0;
+  }
+
+  Future<PaginationData<UserModel>> loadUsersFromStorage(int page) async {
+    final prefs = await _sharedPreferences;
     final cachedData = prefs.getString('$key/$page');
 
     if (cachedData != null) {
@@ -16,31 +25,36 @@ class UserLocalStorage {
         final List<UserModel> users = (jsonData['users'] as List)
             .map((user) => UserModel.fromJson(user))
             .toList();
-        final int totalPages = jsonData['totalPages'];
-        return PaginationData(users: users, totalPages: totalPages);
+
+        return PaginationData(data: users, totalPages: await totalLoadedPages);
       } on Exception catch (e) {
         print('Failed to parse users');
         print(e);
       }
     }
-    return PaginationData(users: [], totalPages: 0);
+    return PaginationData(data: [], totalPages: 0);
   }
 
-  static Future<void> saveUsersToStorage(
+  Future<void> saveUsersToStorage(
     int page,
     List<UserModel> users,
-    int totalPages,
+    int loadedPages,
   ) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _sharedPreferences;
     final jsonData = {
       'users': users.map((user) => user.toJson()).toList(),
-      'totalPages': totalPages,
+      'loadedPages': loadedPages,
     };
     prefs.setString('$key/$page', json.encode(jsonData));
   }
 
-  static Future<UserModel> loadUserFromStorage(int userId) async {
+  Future<void> saveTotalLoadedPages(int totalLoadedPages) async {
     final prefs = await SharedPreferences.getInstance();
+    prefs.setInt(totalLoadedPagesKey, totalLoadedPages);
+  }
+
+  Future<UserModel?> loadUserFromStorage(int userId) async {
+    final prefs = await _sharedPreferences;
 
     final cachedData = prefs.getString('user/$userId');
 
@@ -53,21 +67,14 @@ class UserLocalStorage {
         print(e);
       }
     }
-    return UserModel(
-      id: 0,
-      email: 'N/A',
-      firstName: 'N/A',
-      lastName: 'N/A',
-      avatar: 'N/A',
-    );
+    return null;
   }
 
-  static Future<void> saveUserToStorage(
+  Future<void> saveUserToStorage(
     int userId,
     UserModel user,
   ) async {
-    print('saveUserToStorage');
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await _sharedPreferences;
     final jsonData = user.toJson();
     prefs.setString('user/$userId', json.encode(jsonData));
   }
